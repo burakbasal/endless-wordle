@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endless Wordle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>ENDLESS WORDLE</h1>
+        <div class="stats-container">
+            <div class="stat-box">
+                <span class="stat-label">SKOR</span>
+                <span class="stat-value" id="score">0</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">SERİ</span>
+                <span class="stat-value" id="streak">0</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">EN YÜKSEK</span>
+                <span class="stat-value" id="high-score">0</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="game-board"></div>
+        <div id="keyboard-container"></div>
+    </main>
+
+    <div id="game-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title">Oyun Bitti!</h2>
+            <p id="modal-message"></p>
+            <button id="next-game-btn">Sonraki Kelime</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
