@@ -4,11 +4,22 @@
     let currentGuess = "";
     let guesses = [];
     let maxGuesses = 6;
-    let score = 0;
-    let streak = 0;
-    let highScore = localStorage.getItem("endlessWordleHighScore") || 0;
     
-    let currentLang = "tr"; // Varsayılan Dil
+    let currentLang = "tr"; 
+
+    // Skor, Seri ve En Yüksek Puanları diller için ayrı tutuyoruz
+    let stats = {
+        tr: { 
+            score: 0, 
+            streak: 0, 
+            highScore: localStorage.getItem("endlessWordleHighScore_tr") || 0 
+        },
+        en: { 
+            score: 0, 
+            streak: 0, 
+            highScore: localStorage.getItem("endlessWordleHighScore_en") || 0 
+        }
+    };
 
     const scoreMap = { 1: 100, 2: 80, 3: 60, 4: 40, 5: 20, 6: 10 };
 
@@ -19,13 +30,12 @@
     const modalMessage = document.getElementById("modal-message");
     const nextGameBtn = document.getElementById("next-game-btn");
     
-    // UI Label elementleri
     const langSelect = document.getElementById("lang-select");
     const labelScore = document.getElementById("label-score");
     const labelStreak = document.getElementById("label-streak");
     const labelHighscore = document.getElementById("label-highscore");
 
-    // Dillerin Tüm Ayarları (Klavye Düzeni, Çeviriler, Regex, Kelime Dosyası)
+    // JSON dosyaları buradan çekiliyor
     const langConfig = {
         en: {
             file: 'wordles.json',
@@ -41,7 +51,6 @@
             winMsg: (g, p) => `You guessed it in ${g} tries. +${p} Points!`,
             loseTitle: "Game Over",
             loseMsg: (w) => `The word was: ${w}`,
-            errorMsg: "Word list could not be loaded!",
             nextBtn: "Next Word",
             labels: { score: "SCORE", streak: "STREAK", highscore: "BEST" }
         },
@@ -59,18 +68,14 @@
             winMsg: (g, p) => `Kelimeyi ${g}. denemede buldun. +${p} Puan!`,
             loseTitle: "Oyun Bitti",
             loseMsg: (w) => `Doğru kelime: ${w}`,
-            errorMsg: "Kelime listesi yüklenemedi!",
             nextBtn: "Sonraki Kelime",
             labels: { score: "SKOR", streak: "SERİ", highscore: "EN YÜKSEK" }
         }
     };
 
-    // Dil seçildiğinde olanlar
     if (langSelect) {
         langSelect.addEventListener("change", (e) => {
             currentLang = e.target.value;
-            score = 0;   // Yeni dile geçince rekabet sıfırlanır
-            streak = 0; 
             updateUILabels();
             updateStats();
             loadWords(); 
@@ -78,6 +83,7 @@
     }
 
     function updateUILabels() {
+        if(!labelScore) return; 
         const config = langConfig[currentLang];
         labelScore.innerText = config.labels.score;
         labelStreak.innerText = config.labels.streak;
@@ -86,24 +92,25 @@
     }
 
     function updateStats() {
-        document.getElementById("high-score").innerText = highScore;
-        document.getElementById("score").innerText = score;
-        document.getElementById("streak").innerText = streak;
+        // Hangi dildeysek o dilin kayıtlı verisini ekrana basar
+        document.getElementById("high-score").innerText = stats[currentLang].highScore;
+        document.getElementById("score").innerText = stats[currentLang].score;
+        document.getElementById("streak").innerText = stats[currentLang].streak;
     }
 
+    // Kelimeleri yeniden JSON dosyalarından çeken asıl fonksiyon
     async function loadWords() {
         try {
             const config = langConfig[currentLang];
             const response = await fetch(config.file);
             const data = await response.json(); 
             
-            // Veriyi çekip ilgili dil formatında küçük harfe dönüştürüyoruz
             wordList = data.map(w => config.lower(w)).filter(w => w.length === 5);
             
             if(wordList.length > 0) {
                 initGame();
             } else {
-                alert(config.errorMsg);
+                alert("Kelime listesi boş veya yüklenemedi!");
             }
         } catch (error) {
             console.error("Kelime yükleme hatası:", error);
@@ -119,9 +126,8 @@
         
         modal.classList.add("hidden");
         drawBoard();
-        drawKeyboard(); // Klavye dil konfigürasyonuna göre baştan çizilir
+        drawKeyboard(); 
         
-        // Önceki dinleyicileri temizleyip yeniden ekliyoruz
         document.removeEventListener("keydown", handleKeyPress);
         document.addEventListener("keydown", handleKeyPress);
     }
@@ -184,7 +190,6 @@
         const config = langConfig[currentLang];
         if (e.key === "Enter") submitGuess();
         else if (e.key === "Backspace") deleteLetter();
-        // Dilin kurallarına göre regex kontrolü yap
         else if (config.regex.test(e.key)) addLetter(config.lower(e.key));
     }
 
@@ -206,7 +211,7 @@
         if (currentGuess.length !== 5) return;
         
         if (!wordList.includes(currentGuess)) {
-            return; // Kelime yoksa işlem yapma
+            return; 
         }
 
         guesses.push(currentGuess);
@@ -263,14 +268,17 @@
 
     function handleWin() {
         document.removeEventListener("keydown", handleKeyPress);
-        streak++;
-        let points = scoreMap[guesses.length] * (streak > 0 ? streak : 1);
-        score += points;
         
-        if (score > highScore) {
-            highScore = score;
-            localStorage.setItem("endlessWordleHighScore", highScore);
+        stats[currentLang].streak++;
+        let points = scoreMap[guesses.length] * (stats[currentLang].streak > 0 ? stats[currentLang].streak : 1);
+        stats[currentLang].score += points;
+        
+        if (stats[currentLang].score > stats[currentLang].highScore) {
+            stats[currentLang].highScore = stats[currentLang].score;
+            localStorage.setItem("endlessWordleHighScore_" + currentLang, stats[currentLang].highScore);
         }
+        
+        updateStats(); 
         
         const config = langConfig[currentLang];
         showModal(config.winTitle, config.winMsg(guesses.length, points));
@@ -278,7 +286,10 @@
 
     function handleLoss() {
         document.removeEventListener("keydown", handleKeyPress);
-        streak = 0;
+        
+        stats[currentLang].streak = 0;
+        updateStats(); 
+        
         const config = langConfig[currentLang];
         showModal(config.loseTitle, config.loseMsg(config.upper(targetWord)));
     }
@@ -295,7 +306,6 @@
         initGame();
     });
 
-    // Oyunu ilk açılışta başlat
     updateUILabels();
     loadWords();
 })();
