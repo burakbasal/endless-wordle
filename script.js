@@ -22,13 +22,14 @@ const keyboardLayout = [
     ["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"]
 ];
 
-// Kelimeleri words.txt dosyasından çekiyoruz
+// Kelimeleri wordles.json dosyasından çekiyoruz
 async function loadWords() {
     try {
-        const response = await fetch('words.txt');
-        const text = await response.text();
-        // Satır sonlarına göre böl, boşlukları temizle ve sadece 5 harfli olanları al
-        wordList = text.split('\n').map(w => w.trim().toLowerCase()).filter(w => w.length === 5);
+        const response = await fetch('wordles.json');
+        const data = await response.json(); // Veriyi doğrudan JSON dizisi olarak çözümlüyoruz
+        
+        // JSON içindeki kelimeleri güvenlik amaçlı küçük harfe çevirip 5 harfli olanları alıyoruz
+        wordList = data.map(w => w.toLowerCase()).filter(w => w.length === 5);
         
         if(wordList.length > 0) {
             initGame();
