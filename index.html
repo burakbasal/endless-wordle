@@ -8,18 +8,26 @@
 </head>
 <body>
     <header>
-        <h1>ENDLESS WORDLE</h1>
+        <div class="header-left">
+            <h1>ENDLESS WORDLE</h1>
+            <div id="language-selector">
+                <select id="lang-select">
+                    <option value="tr">🇹🇷 Türkçe</option>
+                    <option value="en">🇬🇧 English</option>
+                </select>
+            </div>
+        </div>
         <div class="stats-container">
             <div class="stat-box">
-                <span class="stat-label">SKOR</span>
+                <span class="stat-label" id="label-score">SKOR</span>
                 <span class="stat-value" id="score">0</span>
             </div>
             <div class="stat-box">
-                <span class="stat-label">SERİ</span>
+                <span class="stat-label" id="label-streak">SERİ</span>
                 <span class="stat-value" id="streak">0</span>
             </div>
             <div class="stat-box">
-                <span class="stat-label">EN YÜKSEK</span>
+                <span class="stat-label" id="label-highscore">EN YÜKSEK</span>
                 <span class="stat-value" id="high-score">0</span>
             </div>
         </div>
@@ -33,11 +41,3 @@
     <div id="game-modal" class="modal hidden">
         <div class="modal-content">
             <h2 id="modal-title">Oyun Bitti!</h2>
-            <p id="modal-message"></p>
-            <button id="next-game-btn">Sonraki Kelime</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
