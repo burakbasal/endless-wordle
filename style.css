@@ -22,25 +22,35 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh; 
-    height: 100dvh; /* Mobil tarayıcı barları için */
+    height: 100dvh;
     align-items: center;
-    overflow: hidden; /* Aşağı kaymayı engeller */
+    overflow: hidden; 
+    
+    /* Mobil uygulama hissi ve zoom/kaydırma engelleme */
+    touch-action: none; 
+    -webkit-user-select: none; 
+    user-select: none; 
+}
+
+button, select {
+    touch-action: manipulation;
 }
 
 /* --- ÇİZİM TAHTASI CSS'İ --- */
-/* --- ÇİZİM TAHTASI CSS'İ (GÜNCELLENDİ) --- */
 #bg-canvas {
-    position: fixed; /* absolute yerine fixed kullandık, sayfa kaymasını %100 keser */
+    position: fixed; 
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: -1; /* Her şeyin en arkasına gönderdik */
+    z-index: 0; /* Arka planın önünde, oyunun arkasında */
     cursor: crosshair;
 }
 
 /* Tıklamaların boşluklarda arkaya geçmesi, dolu yerlerde üstte kalması için */
 header, main {
+    position: relative;
+    z-index: 1;
     pointer-events: none;
 }
 
@@ -73,7 +83,7 @@ header {
     border-radius: 4px;
     outline: none;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 16px; /* iOS otomatik zoom engeli için 16px'e çekildi */
 }
 
 h1 {
@@ -216,7 +226,7 @@ main {
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 4px 23px 0 rgba(0, 0, 0, 0.8);
-    pointer-events: auto; /* Modala tıklandığında arkaya geçmesin */
+    pointer-events: auto;
 }
 
 button#next-game-btn {
@@ -253,4 +263,11 @@ button#next-game-btn:hover {
     h1 { font-size: 18px; }
     .key { height: 40px; }
     #game-board { max-width: 250px; }
+}
+
+/* Mobilde (ekran daraldığında) çizim tahtasını tamamen gizle */
+@media (max-width: 768px) {
+    #bg-canvas {
+        display: none !important;
+    }
 }
