@@ -11,6 +11,8 @@
 
 * {
     box-sizing: border-box;
+    /* iOS Safari Çift Tıklama (Double-tap) zoom'u kesin olarak kapatır: */
+    touch-action: manipulation !important; 
 }
 
 body {
