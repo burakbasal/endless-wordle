@@ -339,8 +339,7 @@
         
         ctx.lineWidth = 4;
         ctx.lineCap = 'round';
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'; 
-
+        ctx.strokeStyle = '#ffffff';
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
         ctx.beginPath();
