@@ -339,7 +339,7 @@
         
         ctx.lineWidth = 4;
         ctx.lineCap = 'round';
-        ctx.strokeStyle = '#ffffff';
+        ctx.strokeStyle = '#ffffff'; // Çizgi rengi tam beyaz
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
         ctx.beginPath();
@@ -359,6 +359,29 @@
     }
     // ==========================================
     // ÇİZİM TAHTASI (CANVAS) KODLARI BİTİŞİ
+    // ==========================================
+
+    // ==========================================
+    // iOS SAFARI ZOOM ENGELLEME KİLİTLERİ (YENİ EKLENDİ)
+    // ==========================================
+    
+    // 1. İki parmakla yakınlaştırmayı (Pinch-zoom) engelle
+    document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+    });
+
+    // 2. Çift tıklama ile yakınlaştırmayı engelle (Hızlı klavye kullanımını bozmadan)
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        let now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            // Eğer oyuncu klavyeye peş peşe hızlıca basıyorsa engelleme (oyunu bozmamak için)
+            if (!event.target.classList.contains('key')) {
+                event.preventDefault();
+            }
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
     // ==========================================
 
     updateUILabels();
