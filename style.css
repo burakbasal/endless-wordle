@@ -189,7 +189,7 @@ main {
     height: 58px;
     flex: 1; 
     font-weight: bold;
-    font-size: 14px;
+    font-size: 20px;
     cursor: pointer;
     text-transform: uppercase;
     display: flex;
@@ -202,7 +202,7 @@ main {
 
 .key.large {
     flex: 1.5;
-    font-size: 12px;
+    font-size: 20px;
 }
 
 .key.correct { background-color: var(--color-correct); }
