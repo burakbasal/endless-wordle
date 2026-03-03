@@ -28,25 +28,24 @@ body {
 }
 
 /* --- ÇİZİM TAHTASI CSS'İ --- */
+/* --- ÇİZİM TAHTASI CSS'İ (GÜNCELLENDİ) --- */
 #bg-canvas {
-    position: absolute;
+    position: fixed; /* absolute yerine fixed kullandık, sayfa kaymasını %100 keser */
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100dvh;
-    z-index: 0; /* Her şeyin arkasında */
+    height: 100vh;
+    z-index: -1; /* Her şeyin en arkasına gönderdik */
     cursor: crosshair;
 }
 
-/* Boşluklara tıklamayı tuvale (canvas'a) geçir, ancak içindeki dolu elementlerde tıklamayı yakala */
+/* Tıklamaların boşluklarda arkaya geçmesi, dolu yerlerde üstte kalması için */
 header, main {
-    position: relative;
-    z-index: 1;
-    pointer-events: none; /* Boşluklarda tıklamalar arkaya geçer */
+    pointer-events: none;
 }
 
-header > *, #game-board, #keyboard-container {
-    pointer-events: auto; /* Oyun parçaları tıklamaları kendi üstüne alır */
+header *, #game-board, #keyboard-container, #game-modal {
+    pointer-events: auto; /* Yazıların ve butonların tıklanabilirliğini geri açıyoruz */
 }
 /* -------------------------- */
 
