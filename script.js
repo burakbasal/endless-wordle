@@ -7,7 +7,6 @@
     
     let currentLang = "tr"; 
 
-    // Skor, Seri ve En Yüksek Puanları diller için ayrı tutuyoruz
     let stats = {
         tr: { 
             score: 0, 
@@ -35,7 +34,6 @@
     const labelStreak = document.getElementById("label-streak");
     const labelHighscore = document.getElementById("label-highscore");
 
-    // JSON dosyaları buradan çekiliyor
     const langConfig = {
         en: {
             file: 'wordles.json',
@@ -92,13 +90,11 @@
     }
 
     function updateStats() {
-        // Hangi dildeysek o dilin kayıtlı verisini ekrana basar
         document.getElementById("high-score").innerText = stats[currentLang].highScore;
         document.getElementById("score").innerText = stats[currentLang].score;
         document.getElementById("streak").innerText = stats[currentLang].streak;
     }
 
-    // Kelimeleri yeniden JSON dosyalarından çeken asıl fonksiyon
     async function loadWords() {
         try {
             const config = langConfig[currentLang];
@@ -127,7 +123,7 @@
         modal.classList.add("hidden");
         drawBoard();
         drawKeyboard(); 
-        clearCanvas(); // <--- YENİ OYUNDA ÇİZİMİ TEMİZLE
+        clearCanvas(); 
         
         document.removeEventListener("keydown", handleKeyPress);
         document.addEventListener("keydown", handleKeyPress);
@@ -314,24 +310,16 @@
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
 
-    // Canvas boyutunu ekran boyutuna ayarla
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }
     window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); // İlk yüklemede çalıştır
+    resizeCanvas(); 
 
+    // Dokunmatik olaylar (touch) silindi, sadece mouse destekli
     function getMousePos(e) {
-        let x, y;
-        if (e.touches && e.touches.length > 0) {
-            x = e.touches[0].clientX;
-            y = e.touches[0].clientY;
-        } else {
-            x = e.clientX;
-            y = e.clientY;
-        }
-        return { x, y };
+        return { x: e.clientX, y: e.clientY };
     }
 
     function startPosition(e) {
@@ -347,17 +335,10 @@
     function draw(e) {
         if (!isDrawing) return;
         
-        // Mobilde çizim yaparken sayfanın kaymasını vs engelle
-        if(e.cancelable) {
-            e.preventDefault(); 
-        }
-        
         const pos = getMousePos(e);
         
-        // Çizim stili
         ctx.lineWidth = 4;
         ctx.lineCap = 'round';
-        // Modern ve oyunu kapatmayan yarı saydam beyaz bir ton
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'; 
 
         ctx.lineTo(pos.x, pos.y);
@@ -366,18 +347,12 @@
         ctx.moveTo(pos.x, pos.y);
     }
 
-    // Mouse olayları
+    // Sadece bilgisayar faresi için olaylar
     canvas.addEventListener('mousedown', startPosition);
     canvas.addEventListener('mouseup', endPosition);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseleave', endPosition);
 
-    // Dokunmatik olaylar (Mobil destek için)
-    canvas.addEventListener('touchstart', startPosition, { passive: false });
-    canvas.addEventListener('touchend', endPosition);
-    canvas.addEventListener('touchmove', draw, { passive: false });
-
-    // Tahtayı temizleme fonksiyonu (initGame içinde çağrılır)
     function clearCanvas() {
         if(ctx) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
