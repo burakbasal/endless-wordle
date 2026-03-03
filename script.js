@@ -127,6 +127,7 @@
         modal.classList.add("hidden");
         drawBoard();
         drawKeyboard(); 
+        clearCanvas(); // <--- YENİ OYUNDA ÇİZİMİ TEMİZLE
         
         document.removeEventListener("keydown", handleKeyPress);
         document.addEventListener("keydown", handleKeyPress);
@@ -305,6 +306,86 @@
     nextGameBtn.addEventListener("click", () => {
         initGame();
     });
+
+    // ==========================================
+    // ÇİZİM TAHTASI (CANVAS) KODLARI BAŞLANGICI
+    // ==========================================
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+
+    // Canvas boyutunu ekran boyutuna ayarla
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas(); // İlk yüklemede çalıştır
+
+    function getMousePos(e) {
+        let x, y;
+        if (e.touches && e.touches.length > 0) {
+            x = e.touches[0].clientX;
+            y = e.touches[0].clientY;
+        } else {
+            x = e.clientX;
+            y = e.clientY;
+        }
+        return { x, y };
+    }
+
+    function startPosition(e) {
+        isDrawing = true;
+        draw(e);
+    }
+
+    function endPosition() {
+        isDrawing = false;
+        ctx.beginPath();
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        
+        // Mobilde çizim yaparken sayfanın kaymasını vs engelle
+        if(e.cancelable) {
+            e.preventDefault(); 
+        }
+        
+        const pos = getMousePos(e);
+        
+        // Çizim stili
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        // Modern ve oyunu kapatmayan yarı saydam beyaz bir ton
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'; 
+
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    }
+
+    // Mouse olayları
+    canvas.addEventListener('mousedown', startPosition);
+    canvas.addEventListener('mouseup', endPosition);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseleave', endPosition);
+
+    // Dokunmatik olaylar (Mobil destek için)
+    canvas.addEventListener('touchstart', startPosition, { passive: false });
+    canvas.addEventListener('touchend', endPosition);
+    canvas.addEventListener('touchmove', draw, { passive: false });
+
+    // Tahtayı temizleme fonksiyonu (initGame içinde çağrılır)
+    function clearCanvas() {
+        if(ctx) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+    // ==========================================
+    // ÇİZİM TAHTASI (CANVAS) KODLARI BİTİŞİ
+    // ==========================================
 
     updateUILabels();
     loadWords();
