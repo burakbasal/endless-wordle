@@ -27,6 +27,29 @@ body {
     overflow: hidden; /* Aşağı kaymayı engeller */
 }
 
+/* --- ÇİZİM TAHTASI CSS'İ --- */
+#bg-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    z-index: 0; /* Her şeyin arkasında */
+    cursor: crosshair;
+}
+
+/* Boşluklara tıklamayı tuvale (canvas'a) geçir, ancak içindeki dolu elementlerde tıklamayı yakala */
+header, main {
+    position: relative;
+    z-index: 1;
+    pointer-events: none; /* Boşluklarda tıklamalar arkaya geçer */
+}
+
+header > *, #game-board, #keyboard-container {
+    pointer-events: auto; /* Oyun parçaları tıklamaları kendi üstüne alır */
+}
+/* -------------------------- */
+
 header {
     width: 100%;
     max-width: 500px;
@@ -194,6 +217,7 @@ main {
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 4px 23px 0 rgba(0, 0, 0, 0.8);
+    pointer-events: auto; /* Modala tıklandığında arkaya geçmesin */
 }
 
 button#next-game-btn {
